@@ -13,7 +13,7 @@ import cv2
 import numpy as np
 import math
 import os
-from objloader_simple import *
+import src.objloader_simple as loader
 
 # Minimum number of matches that have to be found
 # to consider the recognition valid
@@ -33,11 +33,30 @@ def main():
     bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
     # load the reference surface that will be searched in the video stream												
     dir_name = os.getcwd()
-    model = cv2.imread(os.path.join(dir_name, 'reference/ref_model_img.jpg'), 0)
+    model = cv2.imread("data/model.jpg")
+    print(model)
+
+    while True:
+        cv2.imshow('MODEL', model)
+        c = cv2.waitKey(5)
+        if c == 27:
+            break
+
+
+    # Check if reference has been found
+    if(model==None):
+        print("No reference to model found!")
+        return
+
+
     # Compute model keypoints and its descriptors
     kp_model, des_model = orb.detectAndCompute(model, None)
     # Load 3D model from OBJ file
-    obj = OBJ(os.path.join(dir_name, '../models/fox.obj'), swapyz=True)  
+    obj = loader.OBJ(os.path.join(dir_name, '../models/fox.obj'), swapyz=True)
+    # Check if 3D model found
+    if (obj == None):
+        print("No 3D model found!")
+
     # init video capture
     cap = cv2.VideoCapture(0)
     # Resize Window in real-time 
